@@ -8,25 +8,37 @@
 import SwiftUI
 
 struct topView: View {
-    @StateObject var viewModel = WeatherViewModel()
-
+    @State private var latitude: String = ""
+    @State private var longitude: String = ""
+    
     var body: some View {
         VStack {
-            if viewModel.locationData.isEmpty {
-                Text("Loading Location...")
-                    .font(.system(size: 40))
-            } else {
-                Text(firstWord(of: viewModel.locationData.first?.display_name ?? "Unknown Location"))
-                    .font(.system(size: 40))
-            }
-        }
-        .onAppear {
-            viewModel.fetchLocation()
+            Form {
+                        Section(header: Text("Location")) {
+                            TextField("Latitude", text: $latitude)
+                                .keyboardType(.numbersAndPunctuation)
+                            TextField("Longitude", text: $longitude)
+                                .keyboardType(.numbersAndPunctuation)
+                        }
+
+                        Button("Submit") {
+                            submitCoordinates()
+                        }
+                    }
+                    .navigationBarTitle("Enter Coordinates")
+            .font(.system(size: 40))
         }
     }
-     func firstWord(of string: String) -> String {
-             return string.components(separatedBy: ",").first ?? string
-         }
+    func submitCoordinates() {
+            // Validate and use the coordinates
+            if let lat = Double(latitude), let lon = Double(longitude) {
+                print("Latitude: \(lat), Longitude: \(lon)")
+                // Further processing
+            } else {
+                print("Invalid input")
+                // Handle invalid input
+            }
+        }
 }
 
 #Preview {

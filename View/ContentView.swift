@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var viewModel = WeatherViewModel()
+    @State var weatherData = WeatherDataModel()
+    
     var body: some View {
         ZStack {
             Image("sun-rays-cloudy-sky")
@@ -16,15 +17,15 @@ struct ContentView: View {
                 .aspectRatio(contentMode: .fill)
                 .edgesIgnoringSafeArea(.all)
                 VStack {
-                    topView()
+                    topView().environment(weatherData)
                     
                     Spacer()
                     
-                    centerView()
+                    centerView().environment(weatherData)
                     
                     Spacer()
                     
-                    sevenDayView()
+                    sevenDayView().environment(weatherData)
                 }
                 .padding()
         }

@@ -8,52 +8,29 @@
 import SwiftUI
 
 struct centerView: View {
-    @StateObject var viewModel = WeatherViewModel()
-
+    @EnvironmentObject var weatherData: WeatherDataModel
+    
+    
     var body: some View {
         VStack {
-            if let weatherData = viewModel.weatherData {
-                VStack{
-                    Text("\(weatherData.current.temperature2m, specifier: "%.1f")°C")
-                    Text("\(weatherData.current.windSpeed10m, specifier: "%.1f")m/s")
-                }
-                .font(.system(size: 40))
-                
-                    
-                // Use the weather code to determine the image
-                Image(systemName: weatherImageName(weatherCode: weatherData.current.weatherCode))
+            VStack{
+                Text(String(weatherData.wData?.current.temperature_2m ?? 0.0)+" C")
+                Text(String(weatherData.wData?.current.wind_speed_10m ?? 0.0)+" m/s")
+            }
+            .font(.system(size: 40))
+            Image(systemName: weatherData.weatherImageName(weatherCode: weatherData.wData?.current.weather_code))
+
                     .resizable()
                     .frame(width: 150, height: 150)
-            } else {
-                Text("Loading...")
-                    .font(.system(size: 40))
-            }
-            Button(action: {
-                viewModel.loadWeatherData()
-            }) {
-                Text("Fetch Weather")
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
+            if(!weatherData.isConnected){
+                Text("Offline mode")
             }
         }
         .frame(width: 300, height: 300)
-        .onAppear {
-            viewModel.loadWeatherData()
-        }
+        
     }
 
-    // Helper function to return image name based on weather code
-    func weatherImageName(weatherCode: Int) -> String {
-        switch weatherCode {
-        case 1...99: // Example: if weather code is 71, show sun
-            return "sun.max"
-        // Add more cases for different weather codes
-        default:
-            return "cloud" // Default image
-        }
-    }
+    
 }
 
 struct centerView_Previews: PreviewProvider {

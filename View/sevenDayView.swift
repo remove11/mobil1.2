@@ -7,42 +7,49 @@
 
 import SwiftUI
 
-struct DailyWeather {
-    var day: String
-    var icon: String
-    var temperature: String
-}
+
 
 struct sevenDayView: View {
+    @EnvironmentObject var weatherData: WeatherDataModel
+    
     // Fyll denna med 7 dagars data
-    let weekWeather: [DailyWeather] = [
-        DailyWeather(day: "Mon", icon: "sun.max.fill", temperature: "17°"),
-        DailyWeather(day: "Tue", icon: "cloud.rain.fill", temperature: "15°"),
-        DailyWeather(day: "Wed", icon: "cloud.sun.fill", temperature: "18°"),
-        DailyWeather(day: "Thu", icon: "wind", temperature: "11°"),
-        DailyWeather(day: "Fri", icon: "snow", temperature: "3°"),
-        DailyWeather(day: "Sat", icon: "sunset.fill", temperature: "10°"),
-        DailyWeather(day: "Sun", icon: "cloud.bolt.rain.fill", temperature: "9°")
-    ]
 
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 20) {
-                ForEach(weekWeather, id: \.day) { weather in
-                    VStack {
-                        Text(weather.day)
+var body: some View {
+ScrollView(.horizontal, showsIndicators: false) {
+    HStack(spacing: 20) {
+        ForEach(0..<7) { idx in
+            VStack {
+                if let dateString = weatherData.wData?.daily.time[idx],
+                let dayOfWeek = weatherData.getDayOfWeek(from: dateString) {
+                        Text(dayOfWeek)
+                            .font(.system(size: 30, weight: .semibold))
+                    
+                    } else {
+                        Text("N/A") // Or any placeholder text
                             .font(.headline)
-                        Image(systemName: weather.icon)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 50)
-                        Text(weather.temperature)
+                    }
+                    if let iconCode = weatherData.wData?.daily.weather_code[idx] {
+                        Image(systemName: weatherData.weatherImageName(weatherCode: iconCode))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 50, height: 50)
+                                        } else {
+                                            Image(systemName: "questionmark")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: 50, height: 50)
+                                        }
+                        Text(String(weatherData.wData?.daily.temperature_2m_max[idx] ?? 0.0))
                             .font(.title)
                     }
                     .frame(width: 100, height: 200)
-                    .background(Color.blue.opacity(0.5))
+                    .background(Color.blue.opacity(0.7))
                     .cornerRadius(40)
+                    .foregroundColor(.white)
                 }
+                    
+                
+               
             }.padding(.horizontal, 60)
         }
     }

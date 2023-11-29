@@ -9,62 +9,26 @@ import Foundation
 
 
 class WeatherViewModel: ObservableObject {
-    @Published var weatherData: WeatherDataModel?
-    @Published var locationData: [LocationModel] = []
-    
-    func fetchWeather() {
-        // Implement API call to fetch weather data
-        // Parse JSON data and update weatherData
-    }
-    
-    func loadSavedData() {
-        // Load data from local storage
-    }
-    
-    func saveDataLocally() {
-        // Implement local data saving (UserDefaults, CoreData, etc.)
-    }
-    
-    func fetchLocation() {
-            let fileName = "locationData" // Replace with the name of your local JSON file
+    func fetchWeatherData(completion: @escaping (WeatherDataModel?) -> Void) {
+            let url = URL(string: "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max&wind_speed_unit=ms")! 
 
-            guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "json") else {
-                print("JSON file not found")
-                return
-            }
-
-            do {
-                let data = try Data(contentsOf: fileURL)
-                let locations = try JSONDecoder().decode([LocationModel].self, from: data)
-                DispatchQueue.main.async {
-                    self.locationData = locations
+            let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                guard let data = data, error == nil else {
+                    print(error ?? "Unknown error")
+                    completion(nil)
+                    return
                 }
-            } catch {
-                print("Error loading or decoding JSON file:", error)
-            }
-        }
-    
-    func saveDataToFile(locationData: Data) {
-        if let stringRepresentation = String(data: locationData, encoding: .utf8) {
-            print(stringRepresentation)
-        }
-    }
-    
-    func loadWeatherData() {
-            guard let fileURL = Bundle.main.url(forResource: "weatherData", withExtension: "json") else {
-                print("JSON file not found")
-                return
-            }
 
-            do {
-                let data = try Data(contentsOf: fileURL)
-                let loadedWeatherData = try JSONDecoder().decode(WeatherDataModel.self, from: data)
-                DispatchQueue.main.async {
-                    self.weatherData = loadedWeatherData
+                do {
+                    let weatherData = try JSONDecoder().decode(WeatherDataModel.self, from: data)
+                    completion(weatherData)
+                } catch {
+                    print(error)
+                    completion(nil)
                 }
-            } catch {
-                print("Error loading or decoding JSON file:", error)
             }
-        }
 
+            task.resume()
+        }
+   
 }
