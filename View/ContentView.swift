@@ -1,14 +1,12 @@
-//
-//  ContentView.swift
-//  Lab1.2
-//
-//  Created by User on 2023-11-23.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     @State var weatherData = WeatherDataModel()
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    var isLandscape: Bool { verticalSizeClass == .compact}
+    
     
     var body: some View {
         ZStack {
@@ -16,23 +14,35 @@ struct ContentView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .edgesIgnoringSafeArea(.all)
-                VStack {
-                    topView().environment(weatherData)
-                    
-                    Spacer()
-                    
-                    centerView().environment(weatherData)
-                    
-                    Spacer()
-                    
-                    sevenDayView().environment(weatherData)
+
+            if isLandscape {
+                // Landscape
+                HStack {
+                    topView().environmentObject(weatherData)
+                    centerView().environmentObject(weatherData)
+                    sevenDayView().environmentObject(weatherData)
                 }
-                .padding()
+            } else {
+                // Portrait
+                VStack {
+                    topView().environmentObject(weatherData)
+                    
+                    Spacer()
+                    
+                    centerView().environmentObject(weatherData)
+                    
+                    Spacer()
+                    
+                    sevenDayView().environmentObject(weatherData)
+                }
+            }
         }
     }
 }
 
-#Preview {
-    ContentView()
-    
+// Preview
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }

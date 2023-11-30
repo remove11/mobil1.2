@@ -75,6 +75,7 @@ class WeatherDataModel: Observable, ObservableObject {
                     }
                     
                     if(!self.isConnected && isConnectedTemp){
+                        self.isConnected = isConnectedTemp
                         self.fetchWeatherData() { data in
                             if let saved = data {
                                 self.saveData(data: saved)
@@ -82,7 +83,7 @@ class WeatherDataModel: Observable, ObservableObject {
                         }
                     }
                     
-                    self.isConnected = isConnectedTemp
+                    
                 }
             }
             let queue = DispatchQueue(label: "NetworkMonitor")

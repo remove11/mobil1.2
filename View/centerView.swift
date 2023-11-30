@@ -26,7 +26,7 @@ struct centerView: View {
                 Text("Offline mode")
             }
         }
-        .frame(width: 300, height: 300)
+        .frame(width: 300, height: 200)
         
     }
 
