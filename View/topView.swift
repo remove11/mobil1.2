@@ -14,42 +14,43 @@ struct topView: View {
     
     var body: some View {
         VStack {
-            Text("Location")
+            // Customized Text Fields
             TextField("Fill Latitude", text: $latitude)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.numbersAndPunctuation)
                 .multilineTextAlignment(.center)
             TextField("Fill Longitude", text: $longitude)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.numbersAndPunctuation)
                 .multilineTextAlignment(.center)
+            // Customized Submit Button
             Button("Submit") {
                 submitCoordinates()
             }
-            .background(.blue.opacity(0.3))
+            .foregroundColor(.blue)
+            .cornerRadius(20)
         }
         .font(.system(size: 25))
-        .frame(width: 200, height: 190)
-        .background(.blue.opacity(0.2))
+        .frame(width: 200, height: 180)
         .cornerRadius(30)
     }
         
     
-    func submitCoordinates() {
-            // Validate and use the coordinates
-            if let lat = Double(latitude), let lon = Double(longitude) {
-                print("Latitude: \(lat), Longitude: \(lon)")
-                weatherData.latitude = lat
-                weatherData.longitude = lon
-                weatherData.fetchWeatherData { data in
-                    print(data)
-                }
-                // Further processing
-            } else {
-                print("Invalid input")
-                // Handle invalid input
+func submitCoordinates() {
+        // Validate and use the coordinates
+        if let lat = Double(latitude), let lon = Double(longitude) {
+            print("Latitude: \(lat), Longitude: \(lon)")
+            weatherData.latitude = lat
+            weatherData.longitude = lon
+            weatherData.fetchWeatherData { data in
+                print(data)
             }
-        
-        
+            // Further processing
+        } else {
+            print("Invalid input")
+            // Handle invalid input
         }
+    }
 }
 
 #Preview {
